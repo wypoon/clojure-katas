@@ -9,16 +9,18 @@
         k (mod n l)]
     (concat (drop k s) (take k s))))
 
+(defn get-offset [letter] (- (int letter) (int \a)))
+
 (defn encode-single [key letter]
-  (let [i (- (int letter) (int \a))
-        j (- (int key) (int \a))]
+  (let [i (get-offset letter)
+        j (get-offset key)]
     ; look up i-th row, j-th column, where indices are 0-based
     (nth (rotate i alphabet) j)))
 
 (defn decode-single [key letter]
   ; given the key (j-th column), go down each row until we find the letter
   ; the first letter of that row is the decoded letter
-  (let [j (- (int key) (int \a))]
+  (let [j (get-offset key)]
     (loop [i 0]
       (if (= letter (nth (rotate i alphabet) j))
         (first (rotate i alphabet))
@@ -28,7 +30,7 @@
   ; look at the i-th row (unencoded letter (plain)),
   ; find the index of the encoded letter (code), i.e., the column,
   ; and that gives us the corresponding letter for the cipher key
-  (let [i (- (int plain) (int \a))
+  (let [i (get-offset plain)
         ; build a map of letters to indices so we can use the letter to look up the index
         m (into {} (map-indexed (fn [idx itm] [itm idx]) (rotate i alphabet)))]
     (nth alphabet (m code))))
