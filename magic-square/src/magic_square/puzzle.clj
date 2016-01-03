@@ -29,8 +29,8 @@
 
 (defn gen-squares [values]
   (->> (comb/permutations values)
-       (map #(partition 3 %)) ; partition each permutation into 3s
-       (map #(vec (map vec %))) ; convert to vector of vectors
+       ; partition each permutation into a vector of 3-element vectors
+       (map #(mapv vec (partition 3 %)))
        (filter #(= [9.0 9.0 9.0] (sum-rows %)))
        (filter #(= [9.0 9.0 9.0] (sum-cols %)))
        (filter #(= [9.0 9.0] (sum-diagonals %)))
