@@ -47,18 +47,8 @@
     ))
 
 ;; Now, we need to write a matrix showing a path
-;; First, a helper function to write a matrix of coordinates
-(defn- coord-matrix [maze]
-  (mapv #(mapv (fn [x] [% x]) (range (ncols maze))) (range (nrows maze))))
-
-;; Then, write a matrix with :x for the path
 (defn write [maze path]
-  (letfn [(f [x]
-            (if (some #(= x %) path)
-              :x
-              (get-in maze x)))]
-    (mapv #(mapv f %) (coord-matrix maze)))
-  )
+  (reduce #(assoc-in %1 %2 :x) maze path))
 
 (defn solve-maze [maze]
   (let [path (first (find-paths maze))]
