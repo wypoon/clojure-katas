@@ -1,5 +1,6 @@
 (ns sudoku.solver
-  (:require [clojure.set :as set]))
+  (:require [clojure.set :as set]
+            [clojure.pprint :as pp]))
 
 ;; Example puzzles
 
@@ -119,7 +120,9 @@
                                           (col-values board coord)
                                           (box-values board coord)))))
 
-;; A more functional approach
+;; Functions to validate the rows, columns, and boxes of a board,
+;; to see if the board is a solution.
+;; These follow a more functional approach.
 
 (def rows identity)
 
@@ -237,3 +240,29 @@
 
 (defn solve [board]
   (first (solve- board)))
+
+(defn sanitize [line]
+  "Remove all whitespace from a line (a string)."
+  (apply str (filter (complement #(Character/isWhitespace %)) line)))
+
+(defn read-lines []
+  (loop [i 0
+         lines []]
+    (if (< i 9)
+      (let [l (read-line)]
+        (if (seq l)
+          (recur (inc i) (conj lines (sanitize l)))
+          ; else l is empty, so start over
+          (recur 0 [])))
+      lines)))
+
+(defn -main [& args]
+  (println "Enter each line of a sudoku puzzle, with . for blank squares.")
+  (println "Whitespace will be ignored.")
+  (println "If you make a mistake, enter an empty line to start over.")
+  (let [lines (read-lines)
+        board (from-string lines)]
+    (println "The solution to your puzzle:")
+    (pp/pprint board)
+    (println "is:")
+    (pp/pprint (solve board))))
